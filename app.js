@@ -4,7 +4,7 @@ const app = express();
 
 app.use(express.json());
 
-const tours = JSON.parse(fs.readFileSync('./dev-data/data/tours.json'));
+const tours = JSON.parse(fs.readFileSync('./dev-data/data/tours-simple.json'));
 
 app.get('/api/v1/tours', (req, res) => {
   res.json({
@@ -16,19 +16,49 @@ app.get('/api/v1/tours', (req, res) => {
   });
 });
 
+//params
+
+app.get('/api/v1/tours/:id', (req, res) => {
+  const id = req.params.id * 1;
+  const tour = tours.find((el) => el.id === id);
+
+  //   if (id > tours.length) {
+  if (!tour) {
+    res.status(404).json({
+      status: 'Fail',
+      message: 'Invalid id',
+    });
+  }
+
+  res.json({
+    status: 'success',
+    data: {
+      tour,
+    },
+  });
+
+  res.json({
+    stutus: 'success',
+  });
+});
+
 app.post('/api/v1/tours', (req, res) => {
-  const newId = tours.length + 1;
+  const newId = tours[tours.length - 1].id + 1;
   const newTour = Object.assign({ id: newId }, req.body);
 
   tours.push(newTour);
-  fs.writeFile('./dev-data/data/tours.json', JSON.stringify(tours), (err) => {
-    res.json({
-      status: 'success',
-      data: {
-        tour: newTour,
-      },
-    });
-  });
+  fs.writeFile(
+    './dev-data/data/tours-simple.json',
+    JSON.stringify(tours),
+    (err) => {
+      res.json({
+        status: 'success',
+        data: {
+          tour: newTour,
+        },
+      });
+    }
+  );
 });
 
 const port = 3000;
