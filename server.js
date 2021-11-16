@@ -34,6 +34,18 @@ const tourSchema = new mongoose.Schema({
 
 const Tour = mongoose.model('Tour', tourSchema)
 
+const testTour = new Tour({
+  name: 'The Sea Adventurer',
+  rating: 4.9,
+  price: 900
+});
+
+testTour.save().then( doc => {
+  console.log(doc);
+}).catch(err => {
+  console.log('eRRor!', err)
+})
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`app running on port ${port}...`);
