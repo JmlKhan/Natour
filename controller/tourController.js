@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { truncate } = require('fs/promises');
 const Tour = require('./../models/tourModel');
 
 
@@ -58,13 +59,41 @@ exports.createTour = async (req, res) => {
     })
   }
 };
-exports.updateTour = (req, res) => {
-  
+exports.updateTour = async (req, res) => {
+  try{
+    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+
+    res.json({
+      status: 'success',
+      data: {
+        tour: 'Updated tour'
+      }
+    })
+  }catch(err) {
+    res.status(404).json({
+      status: 'fail',
+      message: err
+    })
+  }
 };
 
-exports.deleteTour = (req, res) => {
+exports.deleteTour = async (req, res) => {
+ try{
+  const tour = await Tour.findByIdAndDelete(req.params.id)
+
   res.status(204).json({
     status: 'success',
-    data: null,
+    data:{
+      tour: 'data has been deleted successfully!'
+    },
   });
+ }catch(err){
+  res.status(404).json({
+    status: 'fail',
+    message: err
+  })
+ } 
 };
