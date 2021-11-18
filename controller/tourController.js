@@ -22,10 +22,17 @@ try{
     const sortBy = req.query.sort.split(',').join(' ');
     console.log(sortBy)
     query = query.sort(req.query.sort);
-
     //sort('price ratingsAverage')
+  }else {
+    query = query.sort('-createdAt')
   }
-
+  //limiting field
+  if(req.query.fields) {
+    const fields = req.query.fields.split(',').join(' ');
+    query = query.select(fields);
+  }else{
+    query = query.select('-__v');
+  }
   ////execute query
   const tours = await query;
   res.json({
