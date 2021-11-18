@@ -2,6 +2,12 @@ const fs = require('fs');
 const { truncate } = require('fs/promises');
 const Tour = require('./../models/tourModel');
 
+exports.topAlias = (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = '-ratingsAverag,price';
+  req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+  next();
+}
 
 exports.getAllTours = async(req, res) => {
 try{

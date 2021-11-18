@@ -3,7 +3,7 @@ const tourController = require('../controller/tourController');
 const router = express.Router();
 
 //router.param('id', tourController.checkID);
-
+router.route('/top-alias').get(tourController.topAlias, tourController.getAllTours)
 router
   .route('/')
   .get(tourController.getAllTours)
@@ -15,3 +15,4 @@ router
   .delete(tourController.deleteTour);
 
 module.exports = router;
+ 
