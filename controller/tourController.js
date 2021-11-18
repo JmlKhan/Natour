@@ -3,17 +3,20 @@ const { truncate } = require('fs/promises');
 const Tour = require('./../models/tourModel');
 
 
-
-
-
 exports.getAllTours = async(req, res) => {
 try{
   //build query
+  // 1.filtering
   const queryObj = {...req.query};
   const excludeFields = ['page', 'sort', 'limit', 'fields'];
   excludeFields.forEach(el => delete queryObj[el]);
   
-  const query = await Tour.find(queryObj)
+  // 2.Advanced filtering
+  let queryStr = JSON.stringify(queryObj);
+  queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+  console.log(JSON.parse(queryStr))
+
+  const query = await Tour.find(JSON.parse(queryStr))
 
   ////execute query
   const tours = await query;
