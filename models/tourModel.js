@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
+const validator = require('validator')
 
 const tourSchema = new mongoose.Schema({
     name: {
       type: String,
       required: [true, 'A tour must have a name'],
       unique: true,
-      trim: true
+      trim: true,
+      validate: [validator.isAlpha, 'Tour name must contain only letters!']
     },
     duration: {
       type: Number,
@@ -37,7 +39,16 @@ const tourSchema = new mongoose.Schema({
       type: Number,
       required: [true, 'A tour must have a price']
     },
-    priceDiscount: Number,
+    priceDiscount: {
+      type: Number,
+      validate: {
+        validator: function(val) {
+          //this only points to current doc on NEW document creation
+          return val < this.price
+        },
+        message: 'Discount price ({VALUE}) must be lower than price'
+      }
+    },
     summary: {
       type: String,
       trim: true,
