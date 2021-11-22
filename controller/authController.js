@@ -1,12 +1,18 @@
 const User = require('./../models/userModel');
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
 const catchAsync = require('./../utils/catchAsync');
 
 
 exports.signup = catchAsync(async (req, res, next) => {
     const newUser = await User.create(req.body);
-
+    console.log(newUser);
+    const token = jwt.sign({id: newUser._id}, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRES_IN
+    })
     res.status(201).json({
         status: 'success',
+        token,
         data: {
             user: newUser
         }
