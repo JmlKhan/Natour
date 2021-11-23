@@ -13,6 +13,11 @@ app.use(express.json());
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  console.log(req.headers);
+  next();
+})
 
 // ROUTES
 app.use('/api/v1/tours', tourRouter);
