@@ -38,6 +38,11 @@ const userSchema = new mongoose.Schema({
             message: 'Password are not the same!'
         }
     },
+    active: {
+        type: Boolean,
+        default: true,
+        select: false,
+    },
     passwordChangeAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date
@@ -68,9 +73,15 @@ userSchema.methods.changesPasswordAfter = function(JWTTimestamp) {
         
         return JWTTimestamp < changedTimestamp;
     }
-
     return false;
-}
+};
+
+userSchema.pre(/^find/, function(next) {
+    //this points to the current query
+
+    this.find({ active: {$ne: false} });
+    next();
+})
 
 userSchema.methods.createPasswordResetToken = function() {
     const resetToken = crypto.randomBytes(32).toString('hex');
