@@ -76,7 +76,7 @@ userSchema.methods.changesPasswordAfter = function(JWTTimestamp) {
     return false;
 };
 
-userSchema.pre(/^find/, function(next) {
+userSchema.pre('find', function(next) {
     //this points to the current query
 
     this.find({ active: {$ne: false} });
