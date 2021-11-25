@@ -11,19 +11,22 @@ const signToken = id => {
     return jwt.sign({id}, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN
 });
+};
+const createSendToken = (user, statusCode, res) => {
+    const token = signToken(user._id);
+
+    res.status(statusCode).json({
+        status: 'success',
+        token,
+        data: {
+            user
+        }
+    })
 }
 
 exports.signup = catchAsync(async (req, res, next) => {
     const newUser = await User.create(req.body);
-    const token = signToken(newUser._id);
-
-    res.status(201).json({
-        status: 'success',
-        token,
-        data: {
-            user: newUser
-        }
-    })
+    createSendToken(newUser, 201, res);
 });
 
 exports.login = catchAsync( async (req, res, next) => {
@@ -39,11 +42,7 @@ exports.login = catchAsync( async (req, res, next) => {
         return next(new AppError('Incorrect email or password', 401));
     }
     
-    const token=signToken(user._id);
-    res.status(200).json({
-        status: 'success',
-        token
-    })
+    createSendToken(user, 200, res);
 })
 
 exports.protect = catchAsync( async (req, res, next) => {
@@ -149,10 +148,24 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     user.passwordResetExpires = undefined;
     await user.save();
 
-    const token = signToken(user._id);
-
-    res.status(200).json({
-        status: 'success',
-        token
-    });
+    createSendToken(user, 200, res);
 });
+
+exports.updatePassword = catchAsync ( async (req, res, next) => {
+    //1. Get userfrom collection
+    const user = await User.findById(req.user.id).select('+password');
+       
+    //2. check if posted current password is correct
+    if( !(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+        return next( new AppError('Your current password is wrong.', 401))
+    }
+
+    //3. if so, update password
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    await user.save({validateBeforeSave: false});
+
+    //4.log user in, sent JWT
+    createSendToken(user, 200, res);
+    
+})
