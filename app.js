@@ -3,6 +3,8 @@ const app = express();
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 
 const tourRouter = require('./route/tourRouter');
 const userRouter = require('./route/userRouter');
@@ -28,6 +30,12 @@ if (process.env.NODE_ENV === 'development') {
 //body parser, reading data from body into req.body
 app.use(express.json({limit: '10kb'}));
 
+//Data sanitization against Nosql query injection
+app.use(mongoSanitize())
+
+//Data sanitization against XSS
+app.use(xss())
+ 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
