@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const validator = require('validator')
 
 const tourSchema = new mongoose.Schema({
     name: {
@@ -7,10 +6,9 @@ const tourSchema = new mongoose.Schema({
       required: [true, 'A tour must have a name'],
       unique: true,
       trim: true,
-      validate: [validator.isAlpha, 'Tour name must contain only letters!']
     },
     duration: {
-      type: Number,
+      type: String,
       required: [true, 'A tour must have a duration']
     },
     maxGroupSize: {
@@ -59,6 +57,30 @@ const tourSchema = new mongoose.Schema({
       trim: true,
       select: true
     },
+    startLocation: {
+      //GeoJson
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point']
+      },
+      coordinates: [Number],
+      address: String,
+      description: String
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+          coordinates: [Number],
+          address: String,
+          description: String,
+          day: Number
+      },   
+    ],
     imageCover: {
       type: String,
       required: [true,'A tour must have a cover image']
