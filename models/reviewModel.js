@@ -32,6 +32,18 @@ const reviewSchema = new mongoose.Schema({
     toObject: { virtuals: true}
 });
 
+reviewSchema.pre(/^find/, function(next) {
+    this.populate({
+        path: 'user',
+        select: '-passwordResetToken -__v'
+        
+    }).populate({
+        path: 'tour',
+        
+    })
+    next();
+})
+
 const Review = mongoose.model('Review', reviewSchema);
 
 module.exports = Review;
