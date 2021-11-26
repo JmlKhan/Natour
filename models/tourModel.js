@@ -127,6 +127,14 @@ const tourSchema = new mongoose.Schema({
   tourSchema.pre('find', function(next){
     this.find({ secretTour: {$ne: true} })
     next();
+  });
+
+  tourSchema.pre(/^find/, function(next) {
+    this.populate({
+      path: 'guides',
+      select: '-__v -passwordResetToken'
+    });
+    next();
   })
 
   const Tour = mongoose.model('Tour', tourSchema)
