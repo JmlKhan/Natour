@@ -37,9 +37,6 @@ reviewSchema.pre(/^find/, function(next) {
         path: 'user',
         select: '-passwordResetToken -__v'
         
-    }).populate({
-        path: 'tour',
-        
     })
     next();
 })
