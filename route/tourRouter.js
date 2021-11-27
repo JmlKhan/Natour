@@ -2,7 +2,8 @@ const express = require('express');
 const tourController = require('../controller/tourController');
 const router = express.Router();
 const authController = require('./../controller/authController');
-const reviewController = require('./../controller/reviewController');
+// const reviewController = require('./../controller/reviewController');
+const reviewRouter = require('./../route/reviewRouter');
 
 //router.param('id', tourController.checkID);
 router.route('/top-alias').get(tourController.topAlias, tourController.getAllTours)
@@ -17,12 +18,14 @@ router
   .patch(tourController.updateTour)
   .delete(authController.protect, authController.restrictTo('admin', 'lead-tours'), tourController.deleteTour);
 
-router
-  .route('/:tourId/reviews')
-  .post(
-    authController.protect,
-    authController.restrictTo('user'),
-    reviewController.createReview
-  );
+// router
+//   .route('/:tourId/reviews')
+//   .post(
+//     authController.protect,
+//     authController.restrictTo('user'),
+//     reviewController.createReview
+//   );
+
+router.use('/:tourId/reviews', reviewRouter)
 
 module.exports = router;
