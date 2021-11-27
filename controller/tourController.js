@@ -44,43 +44,11 @@ exports.getTour = catchAsync(async (req, res, next) => {
 });
 
 
-exports.createTour = catchAsync(async (req, res, next) => {
-  
-    const newTour = await Tour.create(req.body);
-    res.status(200).json({
-      status: 'success',
-      data: {
-        tour: newTour,
-        runValidators: true
-      }
-    })
-  
-});
-exports.updateTour = catchAsync(async (req, res, next) => {
-    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true
-    });
 
-    res.json({
-      status: 'success',
-      data: {
-        tour: 'Updated tour'
-      }
-    })
-});
 
-// exports.deleteTour = catchAsync(async (req, res, next) => {
-//   const tour = await Tour.findByIdAndDelete(req.params.id)
-//   res.status(204).json({
-//     status: 'success',
-//     data:{
-//       tour: 'data has been deleted successfully!'
-//     },
-//   });
-// });
-
+exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
+exports.createTour = factory.createOne(Tour);
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
     const stats = await Tour.aggregate([
