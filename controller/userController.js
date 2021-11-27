@@ -45,6 +45,10 @@ exports.updateMe = catchAsync ( async (req, res, next) => {
       data: null
     })
   });
+  exports.getMe = (req, res, next) => {
+    req.params.id = req.user.id;
+    next();
+  }
   exports.deleteUser = factory.deleteOne(User);
   exports.updateUser = factory.updateOne(User);
   exports.getUser = factory.getOne(User);
