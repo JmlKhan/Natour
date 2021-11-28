@@ -18,13 +18,7 @@ router
   .patch(authController.protect, authController.restrictTo('admin', 'lead-guide'), tourController.updateTour)
   .delete(authController.protect, authController.restrictTo('admin', 'lead-guide'), tourController.deleteTour);
 
-// router
-//   .route('/:tourId/reviews')
-//   .post(
-//     authController.protect,
-//     authController.restrictTo('user'),
-//     reviewController.createReview
-//   );
+router.route('/tours-within/:distance/center/:latlng/unit/:unit').get(tourController.getToursWithin)
 
 router.use('/:tourId/reviews', reviewRouter)
 
